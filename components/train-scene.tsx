@@ -246,24 +246,21 @@ export function TrainScene() {
 
       <svg
         aria-hidden
-        className="sketchy-line absolute inset-x-0 bottom-[22%] h-[12px] w-full"
+        className="sketchy-line absolute inset-x-0 bottom-[22%] h-[1.2vh] w-full"
         viewBox="0 0 1200 12"
         preserveAspectRatio="none"
         fill="none"
         stroke={INK}
         strokeWidth={2.6}
       >
-        <path
-          d="M0 6 Q60 1 120 6 Q180 11 240 6 Q300 1 360 6 Q420 11 480 6 Q540 1 600 6 Q660 11 720 6 Q780 1 840 6 Q900 11 960 6 Q1020 1 1080 6 Q1140 11 1200 6"
-          vectorEffect="non-scaling-stroke"
-        />
+        <path d="M0 6 Q60 1 120 6 Q180 11 240 6 Q300 1 360 6 Q420 11 480 6 Q540 1 600 6 Q660 11 720 6 Q780 1 840 6 Q900 11 960 6 Q1020 1 1080 6 Q1140 11 1200 6" />
       </svg>
 
-      <Parallax duration={15} className="bottom-[20.2%] h-[6px]">
+      <Parallax duration={15} className="bottom-[20.2%] h-[0.6vh]">
         <div
           className="sketchy-line absolute inset-0"
           style={{
-            backgroundImage: `repeating-linear-gradient(90deg, ${INK} 0 14px, transparent 14px 30px)`,
+            backgroundImage: `repeating-linear-gradient(90deg, ${INK} 0 1.4vh, transparent 1.4vh 3vh)`,
           }}
         />
       </Parallax>

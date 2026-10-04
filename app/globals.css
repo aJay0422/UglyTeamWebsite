@@ -232,7 +232,7 @@
 }
 .rain-drop {
   height: 1.4vh;
-  width: 2px;
+  width: 0.2vh;
   animation: rain-fall 1.7s linear infinite;
 }
 /* 云：下雪 */
