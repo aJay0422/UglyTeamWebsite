@@ -2,7 +2,7 @@ import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
 import { AuroraText } from "@/components/ui/aurora-text";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Meteors } from "@/components/ui/meteors";
-import { Spotlight } from "@/components/ui/spotlight";
+import { LightBeam } from "@/components/light-beam";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -19,7 +19,9 @@ export default function Home() {
         )}
       />
       <Meteors number={24} />
-      <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="#8b5cf6" />
+
+      {/* 从界面左上角射出、终点落在标题左端的光束 */}
+      <LightBeam targetId="hero-title" />
 
       <div className="relative z-10 flex flex-col items-center">
         <BlurFade delay={0.1}>
@@ -29,7 +31,10 @@ export default function Home() {
         </BlurFade>
 
         <BlurFade delay={0.25}>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+          <h1
+            id="hero-title"
+            className="text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl"
+          >
             <AuroraText>丑团官方网站开发中</AuroraText>
             <span className="text-neutral-600">...</span>
           </h1>
