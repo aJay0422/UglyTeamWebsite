@@ -225,13 +225,13 @@ export function TrainScene() {
       <SketchFilters />
 
       <Parallax duration={120} className="top-0 h-1/2">
-        <Cloud key="b1" className="absolute left-[5%] top-[32%] h-[130px] w-[300px]" />
-        <Cloud key="b2" className="absolute left-[10%] top-[19%] h-[106px] w-[244px]" />
-        <Cloud key="b3" className="absolute left-[16%] top-[36%] h-[84px] w-[196px]" />
-        <Cloud key="s1" className="absolute left-[43%] top-[15%] h-[52px] w-[124px]" />
-        <Cloud key="m1" className="absolute left-[62%] top-[30%] h-[110px] w-[254px]" />
-        <Cloud key="m2" className="absolute left-[68%] top-[19%] h-[86px] w-[200px]" />
-        <Cloud key="s2" className="absolute left-[88%] top-[12%] h-[46px] w-[110px]" />
+        <Cloud key="b1" className="absolute left-[5%] top-[32%] h-[12vh] w-[30vh]" />
+        <Cloud key="b2" className="absolute left-[10%] top-[19%] h-[10vh] w-[25vh]" />
+        <Cloud key="b3" className="absolute left-[16%] top-[36%] h-[7vh] w-[17.5vh]" />
+        <Cloud key="s1" className="absolute left-[43%] top-[15%] h-[5vh] w-[12.5vh]" />
+        <Cloud key="m1" className="absolute left-[62%] top-[30%] h-[10vh] w-[25vh]" />
+        <Cloud key="m2" className="absolute left-[68%] top-[19%] h-[8vh] w-[20vh]" />
+        <Cloud key="s2" className="absolute left-[88%] top-[12%] h-[4vh] w-[10vh]" />
       </Parallax>
 
       <Parallax duration={55} className="bottom-[22%] h-[36vh]">

@@ -112,12 +112,11 @@ function Snowflake({ size }: { size: number }) {
   return (
     <svg
       viewBox="0 0 12 12"
-      width={size}
-      height={size}
       fill="none"
       stroke={INK}
       strokeWidth={1.4}
       strokeLinecap="round"
+      style={{ width: `${size}vh`, height: `${size}vh` }}
     >
       <line x1="6" y1="1" x2="6" y2="11" />
       <line x1="1.7" y1="3.5" x2="10.3" y2="8.5" />
@@ -134,8 +133,8 @@ function Snow() {
         left: Math.random() * 100,
         delay: Math.random() * 1.2,
         duration: 3.8 + Math.random() * 2.2,
-        drift: (Math.random() * 2 - 1) * 20,
-        size: 10 + Math.random() * 8,
+        drift: (Math.random() * 2 - 1) * 2,
+        size: 1 + Math.random() * 0.8,
       })),
     []
   );
@@ -150,7 +149,7 @@ function Snow() {
               left: `${f.left}%`,
               animationDelay: `${f.delay}s`,
               animationDuration: `${f.duration}s`,
-              "--drift": `${f.drift}px`,
+              "--drift": `${f.drift}vh`,
             } as CSSProperties
           }
         >
@@ -170,7 +169,7 @@ function Thunder({ count }: { count: number }) {
           key={i}
           viewBox="0 0 24 36"
           fill={INK}
-          className="thunder absolute top-0 h-[26px] w-[17px] -translate-x-1/2"
+          className="thunder absolute top-0 h-[2.6vh] w-[1.7vh] -translate-x-1/2"
           style={{
             left: `${((i + 0.5) / count) * 100}%`,
             animationDelay: `${i * 0.05}s`,

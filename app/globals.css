@@ -228,10 +228,10 @@
   0% { opacity: 0; transform: translateY(0); }
   20% { opacity: 0.6; }
   75% { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(170px); }
+  100% { opacity: 0; transform: translateY(17vh); }
 }
 .rain-drop {
-  height: 14px;
+  height: 1.4vh;
   width: 2px;
   animation: rain-fall 1.7s linear infinite;
 }
@@ -239,7 +239,7 @@
 @keyframes snow-fall {
   0% { opacity: 0; transform: translate(0, 0); }
   15% { opacity: 0.6; }
-  100% { opacity: 0; transform: translate(var(--drift, 8px), 170px); }
+  100% { opacity: 0; transform: translate(var(--drift, 0.8vh), 17vh); }
 }
 .snow-flake {
   border-radius: 9999px;
@@ -271,7 +271,7 @@
 @keyframes apple-drop {
   0% { transform: translate(-50%, calc(var(--fall, 10vh) * -1)); }
   14% { transform: translate(-50%, 0); }
-  20% { transform: translate(-50%, -14px); }
+  20% { transform: translate(-50%, -1.4vh); }
   26% { transform: translate(-50%, 0); }
   26%, 74% { transform: translate(-50%, 0); opacity: 1; }
   100% { transform: translate(-50%, 0); opacity: 0; }
