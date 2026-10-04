@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
     --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -171,4 +171,138 @@
   html {
     @apply font-sans;
     }
+}
+
+/* ---------- 简笔画火车场景动画 ---------- */
+@keyframes pan-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes wheel-spin {
+  to { transform: rotate(-360deg); }
+}
+@keyframes puff {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  25% { opacity: 0.85; }
+  100% { opacity: 0; transform: translate(-40px, -80px) scale(1.8); }
+}
+@keyframes train-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5px); }
+}
+.parallax {
+  animation: pan-right var(--pan-duration, 30s) linear infinite;
+}
+/* 手绘描边抖动（引用场景里定义的 #sketch 滤镜） */
+.sketchy {
+  filter: url(#sketch);
+  overflow: visible;
+}
+/* 地面线条专用的手绘抖动（强度单独设置，引用 #sketch-line） */
+.sketchy-line {
+  filter: url(#sketch-line);
+  overflow: visible;
+}
+.sketch-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-spin 1.5s linear infinite;
+}
+.sketch-puff {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: puff 4s ease-out infinite;
+}
+.sketch-bob {
+  animation: train-bob 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .parallax, .sketch-wheel, .sketch-puff, .sketch-bob {
+    animation: none !important;
+  }
+}
+
+/* ---------- 点击互动特效 ---------- */
+/* 云：下雨 */
+@keyframes rain-fall {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 0.6; }
+  75% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(170px); }
+}
+.rain-drop {
+  height: 14px;
+  width: 2px;
+  animation: rain-fall 1.7s linear infinite;
+}
+/* 云：下雪 */
+@keyframes snow-fall {
+  0% { opacity: 0; transform: translate(0, 0); }
+  15% { opacity: 0.6; }
+  100% { opacity: 0; transform: translate(var(--drift, 8px), 170px); }
+}
+.snow-flake {
+  border-radius: 9999px;
+  animation: snow-fall 4.2s linear infinite;
+}
+/* 云：打雷 */
+@keyframes thunder-flash {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  40% { opacity: 0.15; }
+  55% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.thunder {
+  animation: thunder-flash 1.1s ease-in-out;
+}
+/* 电线杆：鸟飞来 / 飞走 */
+@keyframes bird-fly-in {
+  from { opacity: 0; transform: translate(var(--from-x, -120px), var(--from-y, -120px)) scale(0.2); }
+  to { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+@keyframes bird-fly-out {
+  from { opacity: 1; transform: translate(0, 0) scale(1); }
+  to { opacity: 1; transform: translate(var(--to-x, 160px), var(--to-y, -520px)) scale(2.4); }
+}
+.bird-fly-in { animation: bird-fly-in 1s ease-out forwards; }
+.bird-fly-out { animation: bird-fly-out 1.4s ease-in forwards; }
+/* 树：苹果掉落 + 弹跳 + 静止 + 淡出 */
+@keyframes apple-drop {
+  0% { transform: translate(-50%, calc(var(--fall, 10vh) * -1)); }
+  14% { transform: translate(-50%, 0); }
+  20% { transform: translate(-50%, -14px); }
+  26% { transform: translate(-50%, 0); }
+  26%, 74% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, 0); opacity: 0; }
+}
+.apple {
+  animation: apple-drop 4s linear forwards;
+}
+/* 电线杆：电流闪过 */
+@keyframes spark-flash {
+  0%, 100% { opacity: 0; }
+  15% { opacity: 1; }
+  30% { opacity: 0.1; }
+  45% { opacity: 1; }
+  60% { opacity: 0.1; }
+  80% { opacity: 1; }
+}
+.spark {
+  animation: spark-flash 0.9s linear infinite;
+}
+/* 电线杆：灯泡亮起 + 光晕 */
+@keyframes bulb-glow {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.bulb {
+  animation: bulb-glow 2.6s ease-in-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb {
+    animation: none !important;
+  }
 }
