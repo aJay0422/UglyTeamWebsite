@@ -8,6 +8,7 @@ import {
   INTERACT_COOLDOWN_MS,
   INTERACT_PROBABILITY,
   PAPER,
+  SPARK_BLUE,
 } from "./scene-config";
 
 /** 光晕的暖色（RGB） */
@@ -69,7 +70,7 @@ function Spark() {
     <g
       className="spark"
       fill="none"
-      stroke={INK}
+      stroke={SPARK_BLUE}
       strokeWidth={2.2}
       strokeLinecap="round"
       strokeLinejoin="round"

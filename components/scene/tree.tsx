@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import {
+  APPLE_RED,
   APPLE_REST_MS,
   INK,
   INTERACT_COOLDOWN_MS,
@@ -65,7 +66,7 @@ export function Tree({ className }: { className?: string }) {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M13 9 C10 4 4 5 3 11 C2 18 6 24 13 25 C20 24 24 18 23 11 C22 5 16 4 13 9 Z" fill={PAPER} />
+            <path d="M13 9 C10 4 4 5 3 11 C2 18 6 24 13 25 C20 24 24 18 23 11 C22 5 16 4 13 9 Z" fill={APPLE_RED} />
             <path d="M13 8 C13 5 12 4 11 3" />
             <path d="M12 4 Q16 1 20 3 Q16 7 12 4 Z" fill={PAPER} />
           </svg>

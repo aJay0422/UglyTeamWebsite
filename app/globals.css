@@ -212,7 +212,7 @@
 .sketch-puff {
   transform-box: fill-box;
   transform-origin: center;
-  animation: puff 4s ease-out infinite;
+  animation: puff 4s ease-out infinite backwards;
 }
 .sketch-bob {
   animation: train-bob 2.4s ease-in-out infinite;
@@ -302,8 +302,46 @@
 .bulb {
   animation: bulb-glow 2.6s ease-in-out forwards;
 }
+/* 火车烟囱互动：烟花 / 水花 / 彩带 */
+@keyframes fw-rise {
+  0% { opacity: 0; transform: translateY(0); }
+  10% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(var(--rise, -104px)); }
+}
+.fw-rise {
+  animation: fw-rise 1s ease-out forwards;
+}
+@keyframes fw-burst {
+  0%, 38% { opacity: 0; transform: scale(0.2); }
+  48% { opacity: 1; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+.fw-burst {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: fw-burst 2.4s ease-out forwards;
+}
+/* 水花：抛物线（每滴水用 --dx/--h/--fall 控制轨迹；11 个关键帧 + 线性插值） */
+@keyframes water-arc {
+  0% { opacity: 0; transform: translate(0, 0); }
+  10% { opacity: 1; transform: translate(calc(var(--dx) * 0.1), calc(var(--h) * -0.36 + var(--fall) * -0.08)); }
+  20% { opacity: 1; transform: translate(calc(var(--dx) * 0.2), calc(var(--h) * -0.64 + var(--fall) * -0.12)); }
+  30% { opacity: 1; transform: translate(calc(var(--dx) * 0.3), calc(var(--h) * -0.84 + var(--fall) * -0.12)); }
+  40% { opacity: 1; transform: translate(calc(var(--dx) * 0.4), calc(var(--h) * -0.96 + var(--fall) * -0.08)); }
+  50% { opacity: 1; transform: translate(calc(var(--dx) * 0.5), calc(var(--h) * -1)); }
+  60% { opacity: 1; transform: translate(calc(var(--dx) * 0.6), calc(var(--h) * -0.96 + var(--fall) * 0.12)); }
+  70% { opacity: 1; transform: translate(calc(var(--dx) * 0.7), calc(var(--h) * -0.84 + var(--fall) * 0.28)); }
+  80% { opacity: 1; transform: translate(calc(var(--dx) * 0.8), calc(var(--h) * -0.64 + var(--fall) * 0.48)); }
+  90% { opacity: 1; transform: translate(calc(var(--dx) * 0.9), calc(var(--h) * -0.36 + var(--fall) * 0.72)); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--fall)); }
+}
+.water-drop {
+  will-change: transform, opacity;
+  animation: water-arc 1.8s linear forwards;
+}
 @media (prefers-reduced-motion: reduce) {
-  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb {
+  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb, .fw-rise, .fw-burst, .water-drop {
     animation: none !important;
   }
 }
