@@ -175,10 +175,6 @@
 }
 
 /* ---------- 简笔画火车场景动画 ---------- */
-@keyframes pan-right {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
-}
 @keyframes wheel-spin {
   to { transform: rotate(-360deg); }
 }
@@ -190,9 +186,6 @@
 @keyframes train-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2.5px); }
-}
-.parallax {
-  animation: pan-right var(--pan-duration, 30s) linear infinite;
 }
 /* 手绘描边抖动（引用场景里定义的 #sketch 滤镜） */
 .sketchy {
@@ -207,7 +200,7 @@
 .sketch-wheel {
   transform-box: fill-box;
   transform-origin: center;
-  animation: wheel-spin 1.5s linear infinite;
+  animation: wheel-spin var(--wheel-duration, 1.5s) linear infinite;
 }
 .sketch-puff {
   transform-box: fill-box;
@@ -218,7 +211,7 @@
   animation: train-bob 2.4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .parallax, .sketch-wheel, .sketch-puff, .sketch-bob {
+  .sketch-wheel, .sketch-puff, .sketch-bob {
     animation: none !important;
   }
 }
@@ -340,8 +333,20 @@
   will-change: transform, opacity;
   animation: water-arc 1.8s linear forwards;
 }
+/* 石头压轮退场：屏幕抖动 */
+@keyframes scene-shake {
+  0%, 100% { transform: translate(0, 0); }
+  12% { transform: translate(-7px, 4px); }
+  28% { transform: translate(6px, -5px); }
+  44% { transform: translate(-5px, -4px); }
+  60% { transform: translate(5px, 4px); }
+  78% { transform: translate(-3px, 3px); }
+}
+.scene-shake {
+  animation: scene-shake 0.55s ease-in-out;
+}
 @media (prefers-reduced-motion: reduce) {
-  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb, .fw-rise, .fw-burst, .water-drop {
+  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb, .fw-rise, .fw-burst, .water-drop, .scene-shake {
     animation: none !important;
   }
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { useAnimationFrame, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -13,10 +14,18 @@ import {
   PAPER,
   SPARK_BLUE,
 } from "./scene-config";
+import { useSceneSpeed } from "./speed-context";
 
 type ChimneyEffect = "firework" | "spout";
 const EFFECT_KINDS: ChimneyEffect[] = ["firework", "spout"];
 const EFFECT_MS: Record<ChimneyEffect, number> = { firework: 2600, spout: 1900 };
+
+/** 旋钮每转动一档的角度 */
+const KNOB_STEP_DEG = 90;
+/** 基础速度下车轮转一圈的秒数（会被速度倍率除） */
+const BASE_WHEEL_S = 1.5;
+/** 发车过场结束时镜头的拉近倍率（车窗随之变大） */
+const DEPART_ZOOM = 3.0;
 
 /** 水花可调参数 */
 const SPOUT = {
@@ -77,6 +86,66 @@ export function Train({ className }: { className?: string }) {
   const lastRef = useRef(0);
   const timerRef = useRef<number | null>(null);
 
+  const { speed, level, turn, transition } = useSceneSpeed();
+  const reduced = useReducedMotion();
+  const knobAngle = level * KNOB_STEP_DEG;
+
+  // 镜头过场：场景进度 transition（0=主界面，1=照片墙）驱动“左移 + 拉近（缩放）”
+  const departRef = useRef<SVGGElement>(null);
+  const departTxRef = useRef(0);
+
+  const applyDepart = useCallback(() => {
+    const el = departRef.current;
+    if (!el) return;
+    const p = transition.get();
+    const zoom = 1 + p * (DEPART_ZOOM - 1);
+    const tx = p * departTxRef.current;
+    // 以“车厢起始处 + 地面接触点”(372,280) 为支点：先缩放再整体左移
+    el.setAttribute(
+      "transform",
+      `translate(${tx} 0) translate(372 280) scale(${zoom}) translate(-372 -280)`
+    );
+  }, [transition]);
+
+  useEffect(() => {
+    applyDepart();
+    return transition.on("change", applyDepart);
+  }, [applyDepart, transition]);
+
+  // 车轮转速：把当前速度写入 CSS 变量，供 .sketch-wheel 使用（与背景同源）
+  useAnimationFrame(() => {
+    const el = svgRef.current;
+    if (!el || reduced) return;
+    el.style.setProperty(
+      "--wheel-duration",
+      `${BASE_WHEEL_S / Math.max(speed.get(), 0.05)}s`
+    );
+  });
+
+  // 预测量“车厢起点对齐视口左缘”所需平移量（窗口变化时更新）
+  useEffect(() => {
+    const measure = () => {
+      const el = svgRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width) return;
+      const scale = r.width / 400; // viewBox 宽度为 400
+      // 让车厢起始处（viewBox x=372，距画布左缘 386）正好落到视口左缘
+      departTxRef.current = -(r.left / scale + 386);
+    };
+    const sync = () => {
+      measure();
+      applyDepart();
+    };
+    sync();
+    const t = window.setTimeout(sync, 300);
+    window.addEventListener("resize", sync);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("resize", sync);
+    };
+  }, [applyDepart]);
+
   // 将爆炸点定位到视口从上到下 25% 处（换算成 SVG viewBox 坐标）
   useEffect(() => {
     const update = () => {
@@ -113,6 +182,7 @@ export function Train({ className }: { className?: string }) {
       className={cn("overflow-visible", className)}
       fill="none"
     >
+      <g ref={departRef}>
       <g className="sketch-bob">
         <Wheel x={44} y={254} r={26} />
         <Wheel x={116} y={254} r={26} />
@@ -175,10 +245,18 @@ export function Train({ className }: { className?: string }) {
           />
           <path d="M20 152 L0 232 L34 236" fill={PAPER} />
           <path d="M150 140 Q150 120 166 120 Q182 120 182 140" fill={PAPER} />
-          <circle cx="54" cy="188" r="30" fill={PAPER} />
-          <circle cx="54" cy="188" r="4" fill={PAPER} />
-          <line x1="54" y1="162" x2="54" y2="176" />
-          <line x1="54" y1="200" x2="54" y2="214" />
+          <g
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: "center",
+              transform: `rotate(${knobAngle}deg)`,
+              transition: "transform 0.7s cubic-bezier(0.34, 1.4, 0.64, 1)",
+            }}
+          >
+            <circle cx="54" cy="188" r="30" fill={PAPER} />
+            <circle cx="54" cy="188" r="4" fill={PAPER} />
+            <line x1="54" y1="188" x2="54" y2="166" />
+          </g>
           <line x1="112" y1="140" x2="112" y2="236" />
           <line x1="206" y1="140" x2="206" y2="236" />
           <rect x="286" y="112" width="86" height="124" rx="8" fill={PAPER} />
@@ -186,6 +264,17 @@ export function Train({ className }: { className?: string }) {
           <line x1="329" y1="132" x2="329" y2="174" />
           <line x1="302" y1="153" x2="356" y2="153" />
         </g>
+
+        {/* 旋钮点击区（车头圆圈）：每点一次升一档 */}
+        <circle
+          cx="54"
+          cy="188"
+          r="34"
+          fill="transparent"
+          className="cursor-pointer"
+          style={{ pointerEvents: "all" }}
+          onClick={turn}
+        />
 
         {!effect &&
           [0, 1, 2, 3].map((i) => (
@@ -215,6 +304,7 @@ export function Train({ className }: { className?: string }) {
           className="cursor-pointer"
           onClick={handleClick}
         />
+        </g>
       </g>
     </svg>
   );
