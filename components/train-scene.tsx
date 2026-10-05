@@ -225,28 +225,28 @@ export function TrainScene() {
       <SketchFilters />
 
       <Parallax duration={120} className="top-0 h-1/2">
-        <Cloud key="b1" className="absolute left-[5%] top-[32%] h-[12vh] w-[30vh]" />
-        <Cloud key="b2" className="absolute left-[10%] top-[19%] h-[10vh] w-[25vh]" />
-        <Cloud key="b3" className="absolute left-[16%] top-[36%] h-[7vh] w-[17.5vh]" />
-        <Cloud key="s1" className="absolute left-[43%] top-[15%] h-[5vh] w-[12.5vh]" />
-        <Cloud key="m1" className="absolute left-[62%] top-[30%] h-[10vh] w-[25vh]" />
-        <Cloud key="m2" className="absolute left-[68%] top-[19%] h-[8vh] w-[20vh]" />
-        <Cloud key="s2" className="absolute left-[88%] top-[12%] h-[4vh] w-[10vh]" />
+        <Cloud key="b1" className="absolute left-[5%] top-[32%] h-[calc(12*var(--u))] w-[calc(30*var(--u))]" />
+        <Cloud key="b2" className="absolute left-[10%] top-[19%] h-[calc(10*var(--u))] w-[calc(25*var(--u))]" />
+        <Cloud key="b3" className="absolute left-[16%] top-[36%] h-[calc(7*var(--u))] w-[calc(17.5*var(--u))]" />
+        <Cloud key="s1" className="absolute left-[43%] top-[15%] h-[calc(5*var(--u))] w-[calc(12.5*var(--u))]" />
+        <Cloud key="m1" className="absolute left-[62%] top-[30%] h-[calc(10*var(--u))] w-[calc(25*var(--u))]" />
+        <Cloud key="m2" className="absolute left-[68%] top-[19%] h-[calc(8*var(--u))] w-[calc(20*var(--u))]" />
+        <Cloud key="s2" className="absolute left-[88%] top-[12%] h-[calc(4*var(--u))] w-[calc(10*var(--u))]" />
       </Parallax>
 
-      <Parallax duration={55} className="bottom-[22%] h-[36vh]">
+      <Parallax duration={55} className="bottom-[22%] h-[calc(36*var(--u))]">
         <Pole key="p1" className="absolute bottom-0 left-[20%] h-full w-auto" />
         <Pole key="p2" className="absolute bottom-0 left-[72%] h-[94%] w-auto" />
       </Parallax>
 
-      <Parallax duration={34} className="bottom-[22%] h-[18vh]">
+      <Parallax duration={34} className="bottom-[22%] h-[calc(18*var(--u))]">
         <Tree key="t1" className="absolute bottom-0 left-[30%] h-full w-auto" />
         <Tree key="t2" className="absolute bottom-0 left-[78%] h-[86%] w-auto" />
       </Parallax>
 
       <svg
         aria-hidden
-        className="sketchy-line absolute inset-x-0 bottom-[22%] h-[1.2vh] w-full"
+        className="sketchy-line absolute inset-x-0 bottom-[22%] h-[calc(1.2*var(--u))] w-full"
         viewBox="0 0 1200 12"
         preserveAspectRatio="none"
         fill="none"
@@ -256,7 +256,7 @@ export function TrainScene() {
         <path d="M0 6 Q60 1 120 6 Q180 11 240 6 Q300 1 360 6 Q420 11 480 6 Q540 1 600 6 Q660 11 720 6 Q780 1 840 6 Q900 11 960 6 Q1020 1 1080 6 Q1140 11 1200 6" />
       </svg>
 
-      <Parallax duration={15} className="bottom-[20.2%] h-[0.6vh]">
+      <Parallax duration={15} className="bottom-[20.2%] h-[calc(0.6*var(--u))]">
         <div
           className="sketchy-line absolute inset-0"
           style={{
@@ -265,7 +265,7 @@ export function TrainScene() {
         />
       </Parallax>
 
-      <Train className="absolute bottom-[22%] left-1/2 h-[30vh] w-auto -translate-x-1/2" />
+      <Train className="absolute bottom-[22%] left-1/2 h-[calc(30*var(--u))] w-auto -translate-x-1/2" />
     </div>
   );
 }

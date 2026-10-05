@@ -93,6 +93,7 @@
     transform: translate(-50%, -40%) scale(1);}}}
 
 :root {
+    --u: 1vmin;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -228,18 +229,18 @@
   0% { opacity: 0; transform: translateY(0); }
   20% { opacity: 0.6; }
   75% { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(17vh); }
+  100% { opacity: 0; transform: translateY(calc(17 * var(--u))); }
 }
 .rain-drop {
-  height: 1.4vh;
-  width: 0.2vh;
+  height: calc(1.4 * var(--u));
+  width: calc(0.2 * var(--u));
   animation: rain-fall 1.7s linear infinite;
 }
 /* 云：下雪 */
 @keyframes snow-fall {
   0% { opacity: 0; transform: translate(0, 0); }
   15% { opacity: 0.6; }
-  100% { opacity: 0; transform: translate(var(--drift, 0.8vh), 17vh); }
+  100% { opacity: 0; transform: translate(var(--drift, calc(0.8 * var(--u))), calc(17 * var(--u))); }
 }
 .snow-flake {
   border-radius: 9999px;
@@ -269,9 +270,9 @@
 .bird-fly-out { animation: bird-fly-out 1.4s ease-in forwards; }
 /* 树：苹果掉落 + 弹跳 + 静止 + 淡出 */
 @keyframes apple-drop {
-  0% { transform: translate(-50%, calc(var(--fall, 10vh) * -1)); }
+  0% { transform: translate(-50%, calc(-10 * var(--u))); }
   14% { transform: translate(-50%, 0); }
-  20% { transform: translate(-50%, -1.4vh); }
+  20% { transform: translate(-50%, calc(-1.4 * var(--u))); }
   26% { transform: translate(-50%, 0); }
   26%, 74% { transform: translate(-50%, 0); opacity: 1; }
   100% { transform: translate(-50%, 0); opacity: 0; }

@@ -116,7 +116,7 @@ function Snowflake({ size }: { size: number }) {
       stroke={INK}
       strokeWidth={1.4}
       strokeLinecap="round"
-      style={{ width: `${size}vh`, height: `${size}vh` }}
+      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
     >
       <line x1="6" y1="1" x2="6" y2="11" />
       <line x1="1.7" y1="3.5" x2="10.3" y2="8.5" />
@@ -169,7 +169,7 @@ function Thunder({ count }: { count: number }) {
           key={i}
           viewBox="0 0 24 36"
           fill={INK}
-          className="thunder absolute top-0 h-[2.6vh] w-[1.7vh] -translate-x-1/2"
+          className="thunder absolute top-0 h-[calc(2.6*var(--u))] w-[calc(1.7*var(--u))] -translate-x-1/2"
           style={{
             left: `${((i + 0.5) / count) * 100}%`,
             animationDelay: `${i * 0.05}s`,

@@ -55,7 +55,7 @@ export function Tree({ className }: { className?: string }) {
         />
       </svg>
       {apple && (
-        <div className="apple pointer-events-none absolute bottom-0 left-1/2 w-[2.4vh]">
+        <div className="apple pointer-events-none absolute bottom-0 left-1/2 w-[calc(2.4*var(--u))]">
           <svg
             viewBox="0 0 26 28"
             className="h-auto w-full"
