@@ -345,8 +345,82 @@
 .scene-shake {
   animation: scene-shake 0.55s ease-in-out;
 }
+/* ---------- 照片墙 ---------- */
+.pw-window {
+  overflow: hidden;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  touch-action: none;
+}
+/* 玻璃反光线条（SVG 内，随车厢同频起伏） */
+.pw-glass-svg {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+/* 窗户打开：玻璃以左缘为轴向外旋开 */
+.pw-glass-svg-open {
+  animation: pw-glass-open 0.42s ease-in forwards;
+}
+@keyframes pw-glass-open {
+  0% { transform: perspective(120px) rotateY(0deg); opacity: 1; }
+  100% { transform: perspective(120px) rotateY(-96deg); opacity: 0.1; }
+}
+/* 手写体 + 手绘抖动（不依赖本机是否装了手写字体） */
+.pw-hand {
+  font-family: "华文行楷", "STXingkai", "方正舒体", "FZShuTi", "LXGW WenKai",
+    "霞鹜文楷", "华文楷体", "STKaiti", "楷体", "KaiTi", "幼圆", "YouYuan", cursive;
+  letter-spacing: 0.06em;
+  filter: url(#sketch-text);
+}
+/* 相框花边：四周珠串 */
+.pw-beads {
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(43, 43, 43, 0.7) 1.1px, transparent 1.7px);
+  background-size: 9px 6px;
+  background-position: center;
+}
+/* 明信片右侧的横线格（随内容滚动） */
+.pw-ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 33px,
+    rgba(43, 43, 43, 0.32) 33px,
+    rgba(43, 43, 43, 0.32) 34px
+  );
+  background-attachment: local;
+}
+.pw-line-row {
+  height: 34px;
+  line-height: 34px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 照片四角的“胶带” */
+.pw-tape {
+  position: absolute;
+  width: 58px;
+  height: 18px;
+  background: rgba(233, 227, 210, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border-radius: 1px;
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+.pw-beads-v {
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(43, 43, 43, 0.7) 1.1px, transparent 1.7px);
+  background-size: 6px 9px;
+  background-position: center;
+}
 @media (prefers-reduced-motion: reduce) {
-  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb, .fw-rise, .fw-burst, .water-drop, .scene-shake {
+  .rain-drop, .snow-flake, .thunder, .bird-fly-in, .bird-fly-out, .apple, .spark, .bulb, .fw-rise, .fw-burst, .water-drop, .scene-shake, .pw-glass-svg-open {
     animation: none !important;
   }
 }

@@ -19,6 +19,7 @@ import {
   SpeedProvider,
   useSceneSpeed,
 } from "./scene/speed-context";
+import { PhotoWallProvider } from "./scene/photo-context";
 import { Train } from "./scene/train";
 import { Tree } from "./scene/tree";
 import { INK, PAPER } from "./scene/scene-config";
@@ -149,6 +150,22 @@ function SketchFilters() {
             yChannelSelector="G"
           />
         </filter>
+        <filter id="sketch-text" x="-18%" y="-18%" width="136%" height="136%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.05"
+            numOctaves="2"
+            seed="11"
+            result="noise"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="noise"
+            scale="2.4"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
       </defs>
     </svg>
   );
@@ -245,6 +262,7 @@ function Rock({ sceneRef }: { sceneRef: RefObject<HTMLDivElement | null> }) {
   return (
     <motion.div
       ref={rockRef}
+      data-no-scroll
       drag={!locked}
       dragConstraints={sceneRef}
       dragMomentum={false}
@@ -348,7 +366,12 @@ export function TrainScene() {
           />
         </Parallax>
 
-        <Train className="absolute bottom-[22%] left-1/2 h-[calc(30*var(--u))] w-auto -translate-x-1/2" />
+        <PhotoWallProvider>
+          <Train
+            className="absolute bottom-[22%] left-1/2 h-[calc(30*var(--u))] w-auto -translate-x-1/2"
+            sceneRef={sceneRef}
+          />
+        </PhotoWallProvider>
 
         <Rock sceneRef={sceneRef} />
       </div>

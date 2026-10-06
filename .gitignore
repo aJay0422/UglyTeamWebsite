@@ -43,3 +43,6 @@ next-env.d.ts
 # local database (sqlite)
 *.db
 *.db-journal
+
+# photo wall data (uploaded images + metadata)
+/data

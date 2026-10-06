@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, RefObject } from "react";
 import { useAnimationFrame, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/utils";
@@ -14,7 +14,22 @@ import {
   PAPER,
   SPARK_BLUE,
 } from "./scene-config";
+import { PhotoWall } from "./photo-wall";
+import { usePhotoWall } from "./photo-context";
 import { useSceneSpeed } from "./speed-context";
+import {
+  CAR_COUNT,
+  CAR_SPAN,
+  CAR_START,
+  CAR_W,
+  DEPART_ZOOM,
+  WINDOWS_PER_CAR,
+  WINDOW_SIZE,
+  WINDOW_Y,
+  enumerateSlots,
+  slotId,
+  windowUserX,
+} from "./train-geometry";
 
 type ChimneyEffect = "firework" | "spout";
 const EFFECT_KINDS: ChimneyEffect[] = ["firework", "spout"];
@@ -24,8 +39,6 @@ const EFFECT_MS: Record<ChimneyEffect, number> = { firework: 2600, spout: 1900 }
 const KNOB_STEP_DEG = 90;
 /** 基础速度下车轮转一圈的秒数（会被速度倍率除） */
 const BASE_WHEEL_S = 1.5;
-/** 发车过场结束时镜头的拉近倍率（车窗随之变大） */
-const DEPART_ZOOM = 3.0;
 
 /** 水花可调参数 */
 const SPOUT = {
@@ -74,11 +87,17 @@ function Wheel({ x, y, r }: { x: number; y: number; r: number }) {
  * 侧视简笔火车：车头（居中）朝左 + 紧贴其后的整条车厢带。
  * 点击烟囱（冒烟处）按概率随机触发 烟花 / 喷水花；特效期间隐藏冒烟。
  */
-export function Train({ className }: { className?: string }) {
-  const carCount = 10;
-  const carW = 268;
-  const carStart = 372;
-  const carSpan = carCount * carW;
+export function Train({
+  className,
+  sceneRef,
+}: {
+  className?: string;
+  sceneRef?: RefObject<HTMLDivElement | null>;
+}) {
+  const carCount = CAR_COUNT;
+  const carW = CAR_W;
+  const carStart = CAR_START;
+  const carSpan = CAR_SPAN;
 
   const [effect, setEffect] = useState<ChimneyEffect | null>(null);
   const [burstY, setBurstY] = useState(-34);
@@ -86,7 +105,8 @@ export function Train({ className }: { className?: string }) {
   const lastRef = useRef(0);
   const timerRef = useRef<number | null>(null);
 
-  const { speed, level, turn, transition } = useSceneSpeed();
+  const { speed, level, turn, transition, scroll } = useSceneSpeed();
+  const { photos, opening } = usePhotoWall();
   const reduced = useReducedMotion();
   const knobAngle = level * KNOB_STEP_DEG;
 
@@ -99,18 +119,24 @@ export function Train({ className }: { className?: string }) {
     if (!el) return;
     const p = transition.get();
     const zoom = 1 + p * (DEPART_ZOOM - 1);
-    const tx = p * departTxRef.current;
+    // 发车前平移 + 照片墙水平滚动（scroll 为正表示向右滚，内容左移）
+    const tx = p * departTxRef.current - scroll.get();
     // 以“车厢起始处 + 地面接触点”(372,280) 为支点：先缩放再整体左移
     el.setAttribute(
       "transform",
       `translate(${tx} 0) translate(372 280) scale(${zoom}) translate(-372 -280)`
     );
-  }, [transition]);
+  }, [transition, scroll]);
 
   useEffect(() => {
     applyDepart();
-    return transition.on("change", applyDepart);
-  }, [applyDepart, transition]);
+    const unsubT = transition.on("change", applyDepart);
+    const unsubS = scroll.on("change", applyDepart);
+    return () => {
+      unsubT();
+      unsubS();
+    };
+  }, [applyDepart, transition, scroll]);
 
   // 车轮转速：把当前速度写入 CSS 变量，供 .sketch-wheel 使用（与背景同源）
   useAnimationFrame(() => {
@@ -176,6 +202,7 @@ export function Train({ className }: { className?: string }) {
   };
 
   return (
+    <>
     <svg
       ref={svgRef}
       viewBox="-14 0 400 280"
@@ -214,19 +241,51 @@ export function Train({ className }: { className?: string }) {
             const x = carStart + (k + 1) * carW;
             return <line key={k} x1={x} y1="150" x2={x} y2="236" />;
           })}
-          {Array.from({ length: carCount }, (_, k) =>
-            Array.from({ length: 6 }, (_, i) => (
+          {Array.from({ length: CAR_COUNT }, (_, k) =>
+            Array.from({ length: WINDOWS_PER_CAR }, (_, i) => (
               <rect
                 key={`${k}-${i}`}
-                x={carStart + k * carW + 18 + i * 40}
-                y="168"
-                width="28"
-                height="30"
+                data-slot={slotId(k, i)}
+                x={windowUserX(k, i)}
+                y={WINDOW_Y}
+                width={WINDOW_SIZE}
+                height={WINDOW_SIZE}
                 rx="4"
                 fill={PAPER}
                 strokeWidth={2.4}
               />
             ))
+          )}
+        </g>
+
+        {/* 玻璃反光线条：仅已上传照片的窗户；随车厢同频起伏 */}
+        <g
+          className="sketchy"
+          stroke={INK}
+          strokeWidth={2}
+          strokeLinecap="round"
+          fill="none"
+          style={{ pointerEvents: "none" }}
+        >
+          {enumerateSlots().map((slot) =>
+            photos[slot.id] ? (
+              <g
+                key={slot.id}
+                className={cn("pw-glass-svg", opening === slot.id && "pw-glass-svg-open")}
+              >
+                {/* 用 transparent 矩形确定包围盒，使旋开的转轴为窗户左缘 */}
+                <rect
+                  x={slot.ux}
+                  y={slot.uy}
+                  width={slot.uw}
+                  height={slot.uh}
+                  fill="transparent"
+                  stroke="none"
+                />
+                <line x1={slot.ux + 8} y1={slot.uy + 24} x2={slot.ux + 20} y2={slot.uy + 7} />
+                <line x1={slot.ux + 15} y1={slot.uy + 24} x2={slot.ux + 23} y2={slot.uy + 15} />
+              </g>
+            ) : null
           )}
         </g>
 
@@ -307,6 +366,8 @@ export function Train({ className }: { className?: string }) {
         </g>
       </g>
     </svg>
+    {sceneRef && <PhotoWall svgRef={svgRef} sceneRef={sceneRef} />}
+    </>
   );
 }
 

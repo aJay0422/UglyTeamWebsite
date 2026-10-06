@@ -40,6 +40,8 @@ interface SceneSpeed {
   speed: MotionValue<number>;
   /** 场景过渡进度：0=主界面，1=照片墙（镜头已拉近） */
   transition: MotionValue<number>;
+  /** 照片墙车厢的水平滚动量（SVG 用户单位；>=0 表示向右滚动） */
+  scroll: MotionValue<number>;
   /** 当前档位 0..3 */
   level: number;
   /** 是否已发车（进入照片墙） */
@@ -63,6 +65,7 @@ export function SpeedProvider({ children }: { children: ReactNode }) {
   const [departed, setDeparted] = useState(false);
   const speed = useSpring(1, { stiffness: 55, damping: 18, mass: 0.9 });
   const transition = useMotionValue(0);
+  const scroll = useMotionValue(0);
 
   const levelRef = useRef(0);
   const departedRef = useRef(false);
@@ -94,6 +97,7 @@ export function SpeedProvider({ children }: { children: ReactNode }) {
       departedRef.current = true;
       setDeparted(true);
       speed.set(LEVEL_FACTORS[KNOB_MAX_LEVEL]);
+      scroll.set(0);
       stopTransition();
       animRef.current = animate(transition, 1, {
         duration: DEPART_MS / 1000,
@@ -114,7 +118,7 @@ export function SpeedProvider({ children }: { children: ReactNode }) {
       speed.set(LEVEL_FACTORS[0]);
       timerRef.current = null;
     }, KNOB_RESET_MS);
-  }, [clearTimer, speed, stopTransition, transition]);
+  }, [clearTimer, speed, scroll, stopTransition, transition]);
 
   const exit = useCallback(() => {
     if (!departedRef.current) return;
@@ -124,13 +128,14 @@ export function SpeedProvider({ children }: { children: ReactNode }) {
     setLevel(0);
     clearTimer();
     speed.set(LEVEL_FACTORS[0]);
+    scroll.set(0);
     stopTransition();
     // 镜头拉远回到主界面
     animRef.current = animate(transition, 0, {
       duration: RETURN_MS / 1000,
       ease: "easeInOut",
     });
-  }, [clearTimer, speed, stopTransition, transition]);
+  }, [clearTimer, speed, scroll, stopTransition, transition]);
 
   useEffect(
     () => () => {
@@ -142,7 +147,7 @@ export function SpeedProvider({ children }: { children: ReactNode }) {
 
   return (
     <SceneSpeedContext.Provider
-      value={{ speed, transition, level, departed, turn, exit }}
+      value={{ speed, transition, scroll, level, departed, turn, exit }}
     >
       {children}
     </SceneSpeedContext.Provider>
