@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "@/lib/limits";
+
 export interface PhotoEntry {
   url: string;
   thumbUrl: string;
@@ -27,6 +29,9 @@ export function usePhotos() {
   }, [refresh]);
 
   const upload = useCallback(async (slot: string, file: File) => {
+    if (file.size > MAX_UPLOAD_BYTES) {
+      throw new Error(`图片过大（上限 ${MAX_UPLOAD_MB}MB）`);
+    }
     const fd = new FormData();
     fd.append("slot", slot);
     fd.append("file", file);

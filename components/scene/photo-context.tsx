@@ -71,8 +71,8 @@ export function PhotoWallProvider({ children }: { children: ReactNode }) {
       setError(null);
       try {
         await uploadRaw(slot, file);
-      } catch {
-        setError("上传失败，请重试");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "上传失败，请重试");
       } finally {
         setBusy(false);
       }

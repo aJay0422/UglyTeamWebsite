@@ -7,11 +7,10 @@ import {
   type PhotoMap,
 } from "@/lib/photo-store";
 import { deleteMessages } from "@/lib/message-store";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "@/lib/limits";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const MAX_BYTES = 8 * 1024 * 1024;
 
 function fileUrl(file: string): string {
   return `/api/uploads/${encodeURIComponent(file)}`;
@@ -60,8 +59,11 @@ export async function POST(req: NextRequest) {
   if (!(file instanceof File) || !file.type.startsWith("image/")) {
     return NextResponse.json({ error: "image required" }, { status: 400 });
   }
-  if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "file too large (<=8MB)" }, { status: 413 });
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return NextResponse.json(
+      { error: `file too large (<=${MAX_UPLOAD_MB}MB)` },
+      { status: 413 }
+    );
   }
 
   const original = {
@@ -70,7 +72,7 @@ export async function POST(req: NextRequest) {
   };
 
   let thumbInput: { buffer: Buffer; ext: string } | undefined;
-  if (thumb instanceof File && thumb.type.startsWith("image/") && thumb.size <= MAX_BYTES) {
+  if (thumb instanceof File && thumb.type.startsWith("image/") && thumb.size <= MAX_UPLOAD_BYTES) {
     thumbInput = {
       buffer: Buffer.from(await thumb.arrayBuffer()),
       ext: extFromType(thumb.type),
